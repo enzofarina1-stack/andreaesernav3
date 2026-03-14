@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Andrea &amp; Serena — Guest Guide Roma</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#071C24;--bg-card:#0F3D4E;--bg-lift:#144858;--bg-high:#1A5A6E;
+  --teal:#1A8A9A;--teal-dim:#126070;
+  --gold:#C4922A;--gold-lt:#D4AA50;
+  --white:#FFFFFF;
+  --text-dim:rgba(255,255,255,.55);--text-soft:rgba(255,255,255,.32);
+  --line:rgba(255,255,255,.08);
+  --radius:18px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;font-family:'Jost',sans-serif;background:var(--bg);color:var(--white);max-width:430px;margin:0 auto;overflow:hidden}
+.app{display:flex;flex-direction:column;height:100vh;height:100dvh}
+
+/* SCREENS */
+.screen{display:none;flex-direction:column;flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.screen.active{display:flex;animation:fadeUp .3s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+
+/* ══ LANDING ══ */
+#landing{background:var(--bg);padding:48px 22px 60px;overflow-y:auto}
+.landing-top{text-align:center;margin-bottom:32px}
+.landing-eyebrow{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--teal);margin-bottom:12px}
+.landing-title{font-family:'Playfair Display',serif;font-size:42px;font-weight:400;line-height:1.05;margin-bottom:8px}
+.landing-title em{font-style:italic;color:var(--gold-lt)}
+.landing-sub{font-size:12px;color:var(--text-dim);letter-spacing:.8px}
+
+.apt-card{background:var(--bg-card);border:1px solid var(--line);border-radius:22px;padding:20px;margin-bottom:14px;position:relative;overflow:hidden}
+.apt-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 90% 10%,rgba(26,138,154,.13),transparent 55%);pointer-events:none}
+.apt-card-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px;position:relative;z-index:1}
+.apt-card-name{font-family:'Playfair Display',serif;font-size:24px;font-weight:400;line-height:1.1}
+.apt-card-name em{display:block;font-style:italic;color:var(--gold-lt);font-size:21px}
+.apt-badge{background:rgba(196,146,42,.2);border:1px solid rgba(196,146,42,.4);border-radius:100px;padding:5px 11px;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold-lt);white-space:nowrap;flex-shrink:0;margin-top:3px}
+.apt-addr{font-size:12px;color:var(--text-dim);margin-bottom:16px;position:relative;z-index:1}
+.lang-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;position:relative;z-index:1}
+.lang-btn{display:flex;align-items:center;gap:8px;background:var(--bg-lift);border:1px solid var(--line);border-radius:12px;padding:11px 12px;cursor:pointer;width:100%;transition:background .18s,border-color .18s}
+.lang-btn:active{background:var(--bg-high);border-color:var(--teal)}
+.lang-flag{font-size:20px;flex-shrink:0}
+.lang-name{font-size:12px;font-weight:600;display:block;color:#FFFFFF}
+.lang-sub{font-size:10px;color:rgba(255,255,255,.55);display:block}
+.lang-arrow{margin-left:auto;color:rgba(255,255,255,.4);font-size:13px;flex-shrink:0}
+
+/* ══ GUIDE WRAPPER ══ */
+#guide{flex-direction:column;overflow:hidden;background:#F0EDE8}
+#guide.active{display:flex}
+/* Override bg for all guide inner screens */
+#guide .tab-content{background:#F0EDE8}
+#guide .page-header{background:#F0EDE8}
+#guide .page-header .ph-title{color:#1C1810}
+#guide .page-header .ph-eyebrow{color:var(--teal)}
+#guide .section-title{color:#1C1810}
+#guide .section-sub{color:rgba(28,24,16,.55)}
+#guide .tab-body{background:#F0EDE8}
+/* Home hero stays dark gradient - no change needed */
+.bottom-nav{background:var(--bg-card);border-top:1px solid var(--line);display:flex;flex-shrink:0;padding:8px 0 20px}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;padding:4px 2px}
+.nav-btn .n-ico{font-size:21px;transition:transform .2s}
+.nav-btn .n-lbl{font-size:9px;font-weight:600;letter-spacing:.7px;text-transform:uppercase;color:var(--text-dim);transition:color .2s}
+.nav-btn.active .n-lbl{color:var(--teal)}
+.nav-btn.active .n-ico{transform:translateY(-2px)}
+
+.tab-content{display:none;flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;flex-direction:column}
+.tab-content.active{display:flex;animation:fadeUp .22s ease}
+
+/* ── HOME ── */
+.home-hero{position:relative;overflow:hidden;padding:50px 22px 26px;background:linear-gradient(155deg,var(--bg) 0%,var(--teal-dim) 100%);flex-shrink:0}
+.home-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 80% 20%,rgba(26,138,154,.28),transparent 58%);pointer-events:none}
+.home-hero::after{content:'';position:absolute;bottom:-55px;right:-55px;width:210px;height:210px;border-radius:50%;border:1px solid rgba(26,138,154,.12);pointer-events:none}
+.hero-back{position:absolute;top:13px;left:13px;background:rgba(255,255,255,.08);border:none;border-radius:50%;width:34px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-dim);font-size:17px;z-index:2}
+.hero-superhost{position:absolute;top:13px;right:13px;background:rgba(196,146,42,.2);border:1px solid rgba(196,146,42,.4);border-radius:100px;padding:5px 11px;font-size:9px;letter-spacing:1px;color:var(--gold-lt);z-index:2;display:flex;align-items:center;gap:4px}
+.hero-badge{display:inline-flex;align-items:center;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:100px;padding:5px 13px;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:12px;position:relative;z-index:1}
+.hero-title{font-family:'Playfair Display',serif;font-size:46px;font-weight:400;line-height:1;position:relative;z-index:1;margin-bottom:2px}
+.hero-title em{display:block;font-style:italic;color:var(--gold-lt)}
+.hero-addr{font-size:13px;color:var(--text-dim);margin-bottom:22px;position:relative;z-index:1}
+.hero-stats{display:grid;grid-template-columns:repeat(4,1fr);background:rgba(0,0,0,.28);border-radius:14px;overflow:hidden;border:1px solid var(--line);position:relative;z-index:1}
+.hero-stat{padding:11px 6px;text-align:center;border-right:1px solid var(--line)}
+.hero-stat:last-child{border-right:none}
+.stat-ico{font-size:18px;margin-bottom:3px}
+.stat-lbl{font-size:8px;letter-spacing:1.2px;text-transform:uppercase;color:var(--text-dim);display:block;margin-bottom:2px}
+.stat-val{font-size:12px;font-weight:600}
+
+.welcome-card{margin:14px 14px 0;background:var(--bg-card);border:1px solid var(--line);border-radius:var(--radius);padding:18px}
+.welcome-wrap-outer{background:#F0EDE8;padding:0 0 4px}
+.wc-title{font-size:15px;font-weight:600;margin-bottom:7px}
+.wc-text{font-size:13px;line-height:1.72;color:var(--text-dim);margin-bottom:13px}
+.wc-author{display:inline-flex;align-items:center;gap:6px;background:rgba(196,146,42,.14);border:1px solid rgba(196,146,42,.28);border-radius:100px;padding:5px 13px;font-size:12px;color:var(--gold-lt);font-weight:500}
+
+/* Explore — VERTICAL list */
+.explore-section{padding:18px 14px 8px;background:#F0EDE8}
+.section-title{font-family:'Playfair Display',serif;font-size:21px;font-weight:400;margin-bottom:3px}
+.section-sub{font-size:12px;color:var(--text-dim);margin-bottom:14px}
+.exp-list{display:flex;flex-direction:column;gap:9px}
+.exp-item{display:flex;align-items:center;gap:14px;background:#FFFFFF;border:1px solid rgba(28,24,16,.1);border-radius:14px;padding:14px 16px;cursor:pointer;transition:background .18s,border-color .18s}
+.exp-item:active{background:#F0EDE8;border-color:var(--teal)}
+.exp-ico{width:42px;height:42px;border-radius:12px;background:rgba(26,138,154,.1);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.exp-text{flex:1}
+.exp-label{font-size:14px;font-weight:500;display:block;line-height:1.2;color:#1C1810}
+.exp-sublabel{font-size:11px;color:rgba(28,24,16,.5);display:block;margin-top:2px}
+.exp-arrow{color:var(--teal);font-size:16px;flex-shrink:0}
+
+/* PAGE HEADER */
+.page-header{padding:28px 18px 18px;background:var(--bg);flex-shrink:0;position:relative;border-bottom:1px solid var(--line)}
+.page-header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--teal),transparent)}
+.ph-eyebrow{font-size:9px;letter-spacing:2.8px;text-transform:uppercase;color:var(--teal);margin-bottom:4px}
+.ph-title{font-family:'Playfair Display',serif;font-size:28px;font-weight:400}
+.tab-body{padding:14px 14px 50px}
+
+/* CARDS — white with dark text */
+.t-card{background:#FFFFFF;border:1px solid rgba(28,24,16,.1);border-radius:var(--radius);padding:16px;margin-bottom:10px}
+.t-card-label{font-size:9px;letter-spacing:2.3px;text-transform:uppercase;color:var(--teal);margin-bottom:11px;font-weight:500}
+.t-card p{font-size:13px;line-height:1.75;color:rgba(28,24,16,.65)}
+.t-card strong{color:#1C1810}
+.info-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(28,24,16,.08)}
+.info-row:last-child{border-bottom:none;padding-bottom:0}
+.ir-label{font-size:12px;color:rgba(28,24,16,.5)}
+.ir-value{font-size:13px;font-weight:500;color:#1C1810}
+
+/* Maps button */
+.maps-big-btn{display:flex;align-items:center;justify-content:center;gap:10px;background:var(--teal);border:none;border-radius:14px;color:white;font-family:'Jost',sans-serif;font-size:13px;font-weight:600;padding:14px;width:100%;cursor:pointer;text-decoration:none;transition:opacity .2s;letter-spacing:.5px;margin-top:4px}
+.maps-big-btn:active{opacity:.75}
+
+/* WiFi */
+.wifi-card{background:linear-gradient(135deg,var(--teal-dim),#0A2830);border:1px solid rgba(26,138,154,.3);border-radius:var(--radius);padding:22px;margin-bottom:10px;text-align:center}
+.wifi-ico{font-size:34px;margin-bottom:10px}
+.wifi-net{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--teal);margin-bottom:3px}
+.wifi-name{font-family:'Playfair Display',serif;font-size:22px;margin-bottom:12px}
+.wifi-tip{font-size:13px;color:rgba(255,255,255,.7);line-height:1.65}
+
+/* Rules */
+.rule-item{display:flex;gap:13px;padding:13px 0;border-bottom:1px solid rgba(28,24,16,.08)}
+.rule-item:last-child{border-bottom:none;padding-bottom:0}
+.rule-n{font-family:'Playfair Display',serif;font-size:27px;color:var(--teal);line-height:1;flex-shrink:0;width:22px;text-align:right;margin-top:-2px}
+.rule-title{font-size:13px;font-weight:500;margin-bottom:3px;color:#1C1810}
+.rule-desc{font-size:13px;line-height:1.6;color:rgba(28,24,16,.6)}
+
+/* Spaces */
+.space-card{background:#FFFFFF;border:1px solid rgba(28,24,16,.1);border-radius:var(--radius);padding:16px;margin-bottom:10px}
+.sc-header{display:flex;align-items:center;gap:10px;margin-bottom:9px;padding-bottom:9px;border-bottom:1px solid rgba(28,24,16,.08)}
+.sc-ico{font-size:20px}
+.sc-name{font-family:'Playfair Display',serif;font-size:19px;color:#1C1810}
+.sc-desc{font-size:13px;line-height:1.68;color:rgba(28,24,16,.62);margin-bottom:9px}
+.tags{display:flex;flex-wrap:wrap;gap:5px}
+.tag{background:rgba(26,138,154,.08);border:1px solid rgba(26,138,154,.22);border-radius:100px;padding:4px 10px;font-size:11px;color:#1C5A66}
+
+/* Places */
+.place-card{background:#FFFFFF;border:1px solid rgba(28,24,16,.1);border-radius:var(--radius);padding:15px;margin-bottom:10px;display:flex;gap:13px}
+.place-dot{width:7px;height:7px;border-radius:50%;background:var(--teal);flex-shrink:0;margin-top:6px}
+.place-name{font-family:'Playfair Display',serif;font-size:19px;margin-bottom:4px;color:#1C1810}
+.place-desc{font-size:13px;line-height:1.65;color:rgba(28,24,16,.6);margin-bottom:7px}
+.place-how{font-size:12px;line-height:1.6;color:rgba(28,24,16,.55);margin-bottom:8px;padding:9px 11px;background:rgba(26,138,154,.07);border-radius:9px;border-left:2px solid var(--teal)}
+.maps-btn{display:inline-flex;align-items:center;gap:5px;background:var(--teal);border:none;border-radius:100px;color:white;font-family:'Jost',sans-serif;font-size:10px;font-weight:500;letter-spacing:.8px;text-transform:uppercase;padding:7px 13px;cursor:pointer;text-decoration:none;transition:opacity .2s}
+.maps-btn:active{opacity:.75}
+
+/* Restaurants */
+.resto-card{background:#FFFFFF;border:1px solid rgba(28,24,16,.1);border-radius:var(--radius);overflow:hidden;margin-bottom:10px}
+.resto-top{height:65px;display:flex;align-items:center;justify-content:center;font-size:30px;position:relative}
+.resto-type-badge{position:absolute;bottom:7px;right:9px;font-size:9px;letter-spacing:1.3px;text-transform:uppercase;color:rgba(255,255,255,.65)}
+.resto-body{padding:13px 15px 15px}
+.resto-name{font-family:'Playfair Display',serif;font-size:19px;margin-bottom:2px;color:#1C1810}
+.resto-type{font-size:10px;letter-spacing:1.3px;text-transform:uppercase;color:var(--teal);margin-bottom:7px}
+.resto-desc{font-size:13px;line-height:1.65;color:rgba(28,24,16,.6);margin-bottom:11px}
+.resto-footer{display:flex;align-items:center;justify-content:space-between}
+.guide-btn{display:inline-flex;align-items:center;gap:5px;background:var(--teal);border:none;border-radius:100px;color:white;font-family:'Jost',sans-serif;font-size:10px;font-weight:500;letter-spacing:.8px;text-transform:uppercase;padding:7px 13px;cursor:pointer;text-decoration:none;transition:opacity .2s}
+.guide-btn:active{opacity:.75}
+
+/* Move */
+.move-card{background:#FFFFFF;border:1px solid rgba(28,24,16,.1);border-radius:var(--radius);padding:15px;margin-bottom:10px;display:flex;gap:13px;align-items:flex-start}
+.move-ico{width:42px;height:42px;border-radius:13px;background:rgba(26,138,154,.1);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.move-title{font-size:13px;font-weight:600;margin-bottom:3px;color:#1C1810}
+.move-desc{font-size:13px;line-height:1.65;color:rgba(28,24,16,.6)}
+
+/* Contact bar — stays dark */
+.contact-bar{background:linear-gradient(135deg,var(--teal-dim),#071C24);border:1px solid rgba(26,138,154,.28);border-radius:var(--radius);padding:16px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;position:relative;overflow:hidden}
+.contact-bar::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 85%,rgba(26,138,154,.18),transparent 55%);pointer-events:none}
+.cb-text{position:relative;z-index:1}
+.cb-lbl{font-size:9px;letter-spacing:1.8px;text-transform:uppercase;color:rgba(255,255,255,.38);margin-bottom:2px}
+.cb-name{font-family:'Playfair Display',serif;font-size:17px;color:#FFFFFF}
+.cb-btn{position:relative;z-index:1;background:var(--gold);border:none;border-radius:100px;color:white;font-family:'Jost',sans-serif;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;padding:9px 14px;cursor:pointer;font-weight:500;text-decoration:none;display:flex;align-items:center;gap:5px;transition:opacity .2s}
+.cb-btn:active{opacity:.75}
+
+/* SOS */
+.sos-card{background:#FFFFFF;border:1px solid rgba(28,24,16,.1);border-radius:var(--radius);padding:13px 15px;margin-bottom:8px;display:flex;align-items:center;gap:13px}
+.sos-ico{width:42px;height:42px;border-radius:13px;border:1px solid rgba(28,24,16,.1);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.sos-name{font-size:13px;font-weight:500;margin-bottom:2px;color:#1C1810}
+.sos-desc{font-size:11px;color:rgba(28,24,16,.5)}
+.call-btn{display:flex;align-items:center;gap:4px;background:var(--bg-card);border:1px solid var(--line);border-radius:100px;color:white;font-family:'Jost',sans-serif;font-size:11px;font-weight:500;padding:7px 11px;cursor:pointer;text-decoration:none;white-space:nowrap;margin-left:auto;transition:opacity .2s}
+.call-btn:active{opacity:.75}
+
+/* Steps */
+.step-item{display:flex;gap:15px;padding:14px 0;border-bottom:1px solid rgba(28,24,16,.08)}
+.step-item:last-child{border-bottom:none;padding-bottom:0}
+.step-n{font-family:'Playfair Display',serif;font-size:30px;color:var(--teal);line-height:1;flex-shrink:0;width:24px;text-align:right;margin-top:-4px}
+.step-title{font-size:13px;font-weight:500;margin-bottom:3px;color:#1C1810}
+.step-desc{font-size:13px;line-height:1.65;color:rgba(28,24,16,.6)}
+
+/* Services */
+.svc-row{display:flex;align-items:flex-start;gap:12px;padding:13px 0;border-bottom:1px solid rgba(28,24,16,.08)}
+.svc-row:last-child{border-bottom:none;padding-bottom:0}
+.svc-ico{font-size:18px;flex-shrink:0;margin-top:1px}
+.svc-title{font-size:13px;font-weight:500;margin-bottom:2px;color:#1C1810}
+.svc-desc{font-size:12px;color:rgba(28,24,16,.58);line-height:1.6}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ══ LANDING ══ -->
+<div id="landing" class="screen active">
+  <div class="landing-top">
+    <div class="landing-eyebrow">Roma · Porta Pia</div>
+    <div class="landing-title">Andrea &amp; <em>Serena</em></div>
+    <div class="landing-sub">Seleziona il tuo appartamento</div>
+  </div>
+
+  <div class="apt-card">
+    <div class="apt-card-header">
+      <div class="apt-card-name">Andrea's <em>House</em></div>
+      <div class="apt-badge">★ Superhost</div>
+    </div>
+    <div class="apt-addr">Via Messina 25 · Porta Pia, Roma</div>
+    <div class="lang-row">
+      <button class="lang-btn" onclick="openGuide('apt1','it')">
+        <span class="lang-flag">🇮🇹</span>
+        <span><span class="lang-name">Italiano</span><span class="lang-sub">Guida Ospiti</span></span>
+        <span class="lang-arrow">›</span>
+      </button>
+      <button class="lang-btn" onclick="openGuide('apt1','en')">
+        <span class="lang-flag">🇬🇧</span>
+        <span><span class="lang-name">English</span><span class="lang-sub">Guest Guide</span></span>
+        <span class="lang-arrow">›</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="apt-card">
+    <div class="apt-card-header">
+      <div class="apt-card-name">Serena's <em>House</em></div>
+      <div class="apt-badge">★ Superhost</div>
+    </div>
+    <div class="apt-addr">Piazza Alessandria 17 · Porta Pia, Roma</div>
+    <div class="lang-row">
+      <button class="lang-btn" onclick="openGuide('apt2','it')">
+        <span class="lang-flag">🇮🇹</span>
+        <span><span class="lang-name">Italiano</span><span class="lang-sub">Guida Ospiti</span></span>
+        <span class="lang-arrow">›</span>
+      </button>
+      <button class="lang-btn" onclick="openGuide('apt2','en')">
+        <span class="lang-flag">🇬🇧</span>
+        <span><span class="lang-name">English</span><span class="lang-sub">Guest Guide</span></span>
+        <span class="lang-arrow">›</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ GUIDE ══ -->
+<div id="guide" class="screen">
+
+  <!-- HOME -->
+  <div id="tab-home" class="tab-content active">
+    <div class="home-hero">
+      <button class="hero-back" onclick="backToLanding()">←</button>
+      <div class="hero-superhost">★ Superhost</div>
+      <div class="hero-badge" id="h-badge">✦ PORTA PIA · ROMA</div>
+      <div class="hero-title" id="h-title">Andrea's <em>House</em></div>
+      <div class="hero-addr" id="h-addr">Via Messina 25 — Roma</div>
+      <div class="hero-stats">
+        <div class="hero-stat"><div class="stat-ico">🗝️</div><span class="stat-lbl" id="s-checkin-lbl">Check-in</span><div class="stat-val">15:00</div></div>
+        <div class="hero-stat"><div class="stat-ico">🚪</div><span class="stat-lbl" id="s-checkout-lbl">Check-out</span><div class="stat-val">11:00</div></div>
+        <div class="hero-stat"><div class="stat-ico">📶</div><span class="stat-lbl">WiFi</span><div class="stat-val">Vodafone</div></div>
+        <div class="hero-stat" style="cursor:pointer" onclick="openMaps()"><div class="stat-ico">🧭</div><span class="stat-lbl" id="s-maps-lbl">Naviga</span><div class="stat-val">Maps</div></div>
+      </div>
+    </div>
+
+    <div style="background:#F0EDE8;padding:0 0 2px">
+    <div class="welcome-card">
+      <div class="wc-title" id="wc-title">Benvenuto! 👋</div>
+      <div class="wc-text" id="wc-text">Benvenuti nella vostra casa a Roma! 🌟 Siamo Andrea e Serena, siamo felici di avervi qui e speriamo che il vostro soggiorno sia confortevole, rilassante e pieno di scoperte indimenticabili. Questa guida è stata pensata per aiutarvi a conoscere la casa, i servizi disponibili e i migliori consigli locali. Se avete domande non esitate a contattarci! 🏛🍝</div>
+      <div class="wc-author">★ &nbsp;Andrea &amp; Serena</div>
+    </div>
+
+    </div><!-- /welcome wrap -->
+
+    <div class="explore-section">
+      <div class="section-title" id="exp-title">Esplora la guida</div>
+      <div class="section-sub" id="exp-sub">Tutto quello che ti serve in un tap</div>
+      <div class="exp-list">
+        <div class="exp-item" onclick="switchTab('soggiorno')">
+          <div class="exp-ico">🛋️</div>
+          <div class="exp-text">
+            <span class="exp-label" id="nav-soggiorno">Il tuo soggiorno</span>
+            <span class="exp-sublabel" id="nav-soggiorno-sub">Check-in, WiFi, regole e spazi</span>
+          </div>
+          <span class="exp-arrow">›</span>
+        </div>
+        <div class="exp-item" onclick="switchTab('luoghi')">
+          <div class="exp-ico">🗺️</div>
+          <div class="exp-text">
+            <span class="exp-label" id="nav-luoghi">Luoghi da vedere</span>
+            <span class="exp-sublabel" id="nav-luoghi-sub">Colosseo, Fontana di Trevi e altro</span>
+          </div>
+          <span class="exp-arrow">›</span>
+        </div>
+        <div class="exp-item" onclick="switchTab('mangiare')">
+          <div class="exp-ico">🍽️</div>
+          <div class="exp-text">
+            <span class="exp-label" id="nav-mangiare">Dove mangiare</span>
+            <span class="exp-sublabel" id="nav-mangiare-sub">Ristoranti e bar consigliati</span>
+          </div>
+          <span class="exp-arrow">›</span>
+        </div>
+        <div class="exp-item" onclick="switchTab('muoversi')">
+          <div class="exp-ico">🚇</div>
+          <div class="exp-text">
+            <span class="exp-label" id="nav-muoversi">Come muoversi</span>
+            <span class="exp-sublabel" id="nav-muoversi-sub">Metro, bus, taxi ed emergenze</span>
+          </div>
+          <span class="exp-arrow">›</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding:4px 14px 40px;background:#F0EDE8">
+      <div class="contact-bar">
+        <div class="cb-text"><div class="cb-lbl" id="cb-lbl">Contatta i tuoi host</div><div class="cb-name">Andrea &amp; Serena</div></div>
+        <a href="tel:+393478528278" class="cb-btn">📞 <span id="cb-btn-txt">Chiama</span></a>
+      </div>
+    </div>
+  </div>
+
+  <!-- SOGGIORNO -->
+  <div id="tab-soggiorno" class="tab-content">
+    <div class="page-header">
+      <div class="ph-eyebrow" id="ph-sog-eye">Il tuo</div>
+      <div class="ph-title" id="ph-sog-title">Soggiorno</div>
+    </div>
+    <div class="tab-body">
+
+      <div class="t-card">
+        <div class="t-card-label" id="lbl-times">Check-in &amp; Check-out</div>
+        <div class="info-row"><span class="ir-label" id="lbl-ci">Check-in</span><span class="ir-value">dalle 15:00</span></div>
+        <div class="info-row"><span class="ir-label" id="lbl-co">Check-out</span><span class="ir-value">entro le 11:00</span></div>
+        <div class="info-row"><span class="ir-label" id="lbl-guests">Ospiti massimi</span><span class="ir-value" id="max-ospiti">6 persone</span></div>
+        <div class="info-row"><span class="ir-label" id="lbl-addr">Indirizzo</span><span class="ir-value" id="sog-addr">Via Messina 25</span></div>
+      </div>
+
+      <!-- COME RAGGIUNGERCI -->
+      <div class="t-card">
+        <div class="t-card-label" id="lbl-reach">Come raggiungerci</div>
+        <p id="txt-reach">Siamo nel cuore di Roma, in zona Porta Pia, facilmente raggiungibili con metro, bus e taxi. Apri Maps per le indicazioni stradali dalla tua posizione.</p>
+        <a id="maps-reach-btn" href="https://maps.app.goo.gl/ZUhgfSUhdqXP5wiU9" target="_blank" class="maps-big-btn" style="margin-top:12px">
+          🧭 <span id="maps-reach-txt">Apri su Google Maps</span>
+        </a>
+      </div>
+
+      <div class="t-card">
+        <div class="t-card-label" id="lbl-access">Come accedere</div>
+        <p id="txt-access">Le istruzioni dettagliate per l'accesso ti verranno inviate direttamente <strong>tramite i messaggi di Airbnb</strong> prima del tuo arrivo. Siamo sempre disponibili!</p>
+      </div>
+
+      <div class="t-card">
+        <div class="t-card-label" id="lbl-parking">Parcheggio</div>
+        <p id="txt-parking">Non è disponibile un parcheggio privato. Ti consigliamo i mezzi pubblici, molto comodi in questa zona centrale di Roma.</p>
+      </div>
+
+      <div class="wifi-card">
+        <div class="wifi-ico">📡</div>
+        <div class="wifi-net">WiFi</div>
+        <div class="wifi-name">Vodafone</div>
+        <div class="wifi-tip" id="wifi-tip">📱 Dietro al modem trovi un <strong>QR code</strong> — inquadralo con la fotocamera del telefono e ti colleghi automaticamente!</div>
+      </div>
+
+      <div class="t-card">
+        <div class="t-card-label" id="lbl-rules">Regole della Casa</div>
+        <div class="rule-item"><div class="rule-n">1</div><div><div class="rule-title" id="r1t">Silenzio Notturno</div><div class="rule-desc" id="r1d">Dalle 23:00 alle 8:00 si prega di mantenere un livello di rumore ridotto.</div></div></div>
+        <div class="rule-item"><div class="rule-n">2</div><div><div class="rule-title" id="r2t">Niente Fumo</div><div class="rule-desc" id="r2d">Vietato fumare all'interno. Consentito solo sul balcone/terrazzo.</div></div></div>
+        <div class="rule-item"><div class="rule-n">3</div><div><div class="rule-title" id="r3t">Animali Domestici</div><div class="rule-desc" id="r3d">Non ammessi. Per eccezioni contattare gli host prima della prenotazione.</div></div></div>
+        <div class="rule-item"><div class="rule-n">4</div><div><div class="rule-title" id="r4t">Ospiti Esterni</div><div class="rule-desc" id="r4d">I visitatori esterni non possono pernottare nell'appartamento.</div></div></div>
+        <div class="rule-item"><div class="rule-n">5</div><div><div class="rule-title" id="r5t">Raccolta Rifiuti</div><div class="rule-desc" id="r5d">Unico secchio nell'appartamento. Bidoni grandi disponibili in strada.</div></div></div>
+      </div>
+
+      <div class="space-card">
+        <div class="sc-header"><span class="sc-ico">🛌</span><div class="sc-name" id="sp1-name">Camera da Letto</div></div>
+        <p class="sc-desc" id="camera-desc">2 camere con letto matrimoniale. Biancheria inclusa.</p>
+        <div class="tags"><span class="tag" id="tag-ac">Aria condizionata</span><span class="tag" id="tag-heat">Riscaldamento</span><span class="tag" id="tag-tv">Smart TV</span><span class="tag" id="tag-safe">Cassaforte</span></div>
+      </div>
+      <div class="space-card">
+        <div class="sc-header"><span class="sc-ico">🍳</span><div class="sc-name" id="sp2-name">Cucina</div></div>
+        <p class="sc-desc" id="sp2-desc">Completamente attrezzata. <strong>Cialde caffè</strong> incluse.</p>
+        <div class="tags"><span class="tag">Forno</span><span class="tag">Microonde</span><span class="tag">Lavastoviglie</span><span class="tag" id="tag-coffee">Macchinetta caffè</span></div>
+      </div>
+      <div class="space-card">
+        <div class="sc-header"><span class="sc-ico">🚿</span><div class="sc-name" id="sp3-name">Bagno</div></div>
+        <p class="sc-desc" id="sp3-desc">Doccia, asciugacapelli disponibile.</p>
+        <div class="tags"><span class="tag" id="tag-shower">Doccia</span><span class="tag" id="tag-hairdryer">Asciugacapelli</span><span class="tag" id="tag-iron">Ferro da stiro</span><span class="tag" id="tag-wash">Lavatrice</span></div>
+      </div>
+
+      <div class="t-card">
+        <div class="t-card-label" id="lbl-extras">Servizi Extra</div>
+        <div class="svc-row"><span class="svc-ico">🧺</span><div><div class="svc-title" id="svc1t">Cambio Biancheria</div><div class="svc-desc" id="svc1d">Disponibile su richiesta durante il soggiorno.</div></div></div>
+        <div class="svc-row"><span class="svc-ico">🧹</span><div><div class="svc-title" id="svc2t">Pulizie Aggiuntive</div><div class="svc-desc" id="svc2d">A pagamento — contattaci per info e prezzi.</div></div></div>
+        <div class="svc-row"><span class="svc-ico">🚗</span><div><div class="svc-title" id="svc3t">Transfer Aeroporto</div><div class="svc-desc" id="svc3d">Su richiesta. Contattaci su WhatsApp o Airbnb.</div></div></div>
+        <div class="svc-row"><span class="svc-ico">☕</span><div><div class="svc-title" id="svc4t">Colazione</div><div class="svc-desc" id="svc4d">Disponibile su richiesta — contattaci per organizzarla.</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LUOGHI -->
+  <div id="tab-luoghi" class="tab-content">
+    <div class="page-header">
+      <div class="ph-eyebrow" id="ph-luoghi-eye">Esplora Roma</div>
+      <div class="ph-title" id="ph-luoghi-title">Luoghi</div>
+    </div>
+    <div class="tab-body">
+      <div class="place-card"><div class="place-dot"></div><div>
+        <div class="place-name">🏛 Colosseo</div>
+        <p class="place-desc" id="pl1-desc">L'anfiteatro più famoso al mondo. Simbolo di Roma, perfetto per chi ama la storia e l'archeologia.</p>
+        <div class="place-how" id="pl1-how">🚇 Metro Linea B — fermata <strong>Castro Pretorio</strong> → scendi a <strong>Colosseo</strong>. Biglietto ~€1,50.</div>
+        <a href="https://maps.app.goo.gl/ZUhgfSUhdqXP5wiU9" target="_blank" class="maps-btn">🧭 <span class="guide-me">Guide me here</span></a>
+      </div></div>
+
+      <div class="place-card"><div class="place-dot"></div><div>
+        <div class="place-name">⛲ Fontana di Trevi</div>
+        <p class="place-desc" id="pl2-desc">Iconica fontana barocca. Lancia la monetina per il ritorno a Roma!</p>
+        <div class="place-how" id="pl2-how">🚇 Metro A da Repubblica → <strong>Barberini</strong> → 8 min a piedi. Totale ~20 min. A piedi ~35 min.</div>
+        <a href="https://maps.google.com/?q=Fontana+di+Trevi+Roma" target="_blank" class="maps-btn">🧭 <span class="guide-me">Guide me here</span></a>
+      </div></div>
+
+      <div class="place-card"><div class="place-dot"></div><div>
+        <div class="place-name">🎭 Piazza Navona</div>
+        <p class="place-desc" id="pl3-desc">Splendida piazza barocca con fontane e artisti di strada. Ideale per una passeggiata e un caffè.</p>
+        <div class="place-how" id="pl3-how">🚌 Bus 492 o 63 fino a Pantheon → 5 min a piedi. Durata ~30 min.</div>
+        <a href="https://maps.google.com/?q=Piazza+Navona+Roma" target="_blank" class="maps-btn">🧭 <span class="guide-me">Guide me here</span></a>
+      </div></div>
+
+      <div class="place-card"><div class="place-dot"></div><div>
+        <div class="place-name">🏛 Pantheon</div>
+        <p class="place-desc" id="pl4-desc">Tempio romano trasformato in chiesa, famoso per la cupola con oculo.</p>
+        <div class="place-how" id="pl4-how">🚌 Bus 40 o 64 → Piazza Venezia → 5 min a piedi. Durata ~25 min.</div>
+        <a href="https://maps.google.com/?q=Pantheon+Roma" target="_blank" class="maps-btn">🧭 <span class="guide-me">Guide me here</span></a>
+      </div></div>
+
+      <div class="place-card"><div class="place-dot"></div><div>
+        <div class="place-name">🍊 Giardino degli Aranci</div>
+        <p class="place-desc" id="pl5-desc">Parco panoramico sul colle Aventino con vista spettacolare su Colosseo e cupola di San Pietro. Accesso libero.</p>
+        <div class="place-how" id="pl5-how">🚇 Metro B → <strong>Circo Massimo</strong> → 12 min a piedi. 💡 Dal Buco della Serratura in Piazza dei Cavalieri di Malta si vede la Cupola di San Pietro perfettamente inquadrata!</div>
+        <a href="https://maps.google.com/?q=Giardino+degli+Aranci+Roma" target="_blank" class="maps-btn">🧭 <span class="guide-me">Guide me here</span></a>
+      </div></div>
+    </div>
+  </div>
+
+  <!-- MANGIARE -->
+  <div id="tab-mangiare" class="tab-content">
+    <div class="page-header">
+      <div class="ph-eyebrow" id="ph-man-eye">Consigli degli host</div>
+      <div class="ph-title" id="ph-man-title">Mangiare</div>
+    </div>
+    <div class="tab-body">
+      <div class="resto-card">
+        <div class="resto-top" style="background:linear-gradient(135deg,#1a3020,#0a1a10)">🍝<span class="resto-type-badge">Cucina romana</span></div>
+        <div class="resto-body">
+          <div class="resto-name">Ai Balestrari a Porta Pia</div>
+          <div class="resto-type" id="rt1">Trattoria · Vicino a casa</div>
+          <p class="resto-desc" id="rd1">Ottimo per provare la cucina tipica romana: <strong>carbonara, amatriciana e supplì</strong>.</p>
+          <div class="resto-footer"><div class="tags"><span class="tag">€€</span><span class="tag" id="rtag1">Vicino</span></div><a href="https://maps.google.com/?q=Ai+Balestrari+Roma+Porta+Pia" target="_blank" class="guide-btn"><span class="guide-me">Guide me here</span> →</a></div>
+        </div>
+      </div>
+      <div class="resto-card">
+        <div class="resto-top" style="background:linear-gradient(135deg,#2a1a10,#150d06)">🍷<span class="resto-type-badge">Trastevere</span></div>
+        <div class="resto-body">
+          <div class="resto-name">Da Vittorio</div>
+          <div class="resto-type" id="rt2">Cucina tipica romana</div>
+          <p class="resto-desc" id="rd2">Nel cuore di Trastevere, uno dei quartieri più caratteristici di Roma. Cucina tradizionale autentica.</p>
+          <div class="resto-footer"><div class="tags"><span class="tag">€€</span><span class="tag">Trastevere</span></div><a href="https://maps.google.com/?q=Da+Vittorio+Trastevere+Roma" target="_blank" class="guide-btn"><span class="guide-me">Guide me here</span> →</a></div>
+        </div>
+      </div>
+      <div class="resto-card">
+        <div class="resto-top" style="background:linear-gradient(135deg,#1a2030,#0a1020)">🍕<span class="resto-type-badge">Trastevere</span></div>
+        <div class="resto-body">
+          <div class="resto-name">Ivo a Trastevere</div>
+          <div class="resto-type" id="rt3">Pizza · Cucina romana</div>
+          <p class="resto-desc" id="rd3">Storica pizzeria di Trastevere, animata e autentica. Ottima pizza romana.</p>
+          <div class="resto-footer"><div class="tags"><span class="tag">€</span><span class="tag">Trastevere</span></div><a href="https://maps.google.com/?q=Ivo+a+Trastevere+Roma" target="_blank" class="guide-btn"><span class="guide-me">Guide me here</span> →</a></div>
+        </div>
+      </div>
+      <div class="resto-card">
+        <div class="resto-top" style="background:linear-gradient(135deg,#2a2010,#151008)">☕<span class="resto-type-badge" id="rt4badge">Bar · Colazione</span></div>
+        <div class="resto-body">
+          <div class="resto-name">Why Not Café</div>
+          <div class="resto-type" id="rt4">Bar · Colazione</div>
+          <p class="resto-desc" id="rd4">Perfetto per cappuccino, cornetto e caffè. La scelta ideale per la mattina.</p>
+          <div class="resto-footer"><div class="tags"><span class="tag">€</span><span class="tag" id="rtag4">Colazione</span></div><a href="https://maps.google.com/?q=Why+Not+Cafe+Roma" target="_blank" class="guide-btn"><span class="guide-me">Guide me here</span> →</a></div>
+        </div>
+      </div>
+      <div class="t-card">
+        <div class="t-card-label" id="lbl-super">🛒 Supermercato</div>
+        <p id="txt-super">Ben fornito in <strong>Piazza Alessandria</strong> — vicinissimo a casa!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- MUOVERSI -->
+  <div id="tab-muoversi" class="tab-content">
+    <div class="page-header">
+      <div class="ph-eyebrow" id="ph-mov-eye">Trasporti &amp; Emergenze</div>
+      <div class="ph-title" id="ph-mov-title">Muoversi</div>
+    </div>
+    <div class="tab-body">
+      <div class="move-card"><div class="move-ico">🚇</div><div><div class="move-title" id="mv1t">Metro — Linea B</div><div class="move-desc" id="mv1d">Fermata più vicina: <strong>Castro Pretorio</strong>. Raggiunge il Colosseo e fa cambio per Linea A (Termini).</div></div></div>
+      <div class="move-card"><div class="move-ico">🚌</div><div><div class="move-title" id="mv2t">Bus — Linee 40, 63, 64, 492</div><div class="move-desc" id="mv2d">Ottima copertura da Via Messina verso Trastevere, Centro Storico e oltre.</div></div></div>
+      <div class="move-card"><div class="move-ico">🎫</div><div><div class="move-title" id="mv3t">Biglietti</div><div class="move-desc" id="mv3d">Biglietto singolo <strong>~€1,50</strong>, valido 100 min su metro e bus. Compralo prima in edicole o tabacchi.</div></div></div>
+      <div class="move-card"><div class="move-ico">🚖</div><div><div class="move-title" id="mv4t">Taxi &amp; App</div><div class="move-desc" id="mv4d">Usa <strong>itTaxi</strong> o <strong>FREE NOW</strong>. Uber è disponibile ma più costoso in centro.</div></div></div>
+
+      <div class="t-card-label" style="font-size:9px;letter-spacing:2.3px;text-transform:uppercase;color:var(--teal);margin:16px 0 10px;font-weight:500;display:block" id="lbl-sos">🆘 Emergenze</div>
+
+      <div class="sos-card"><div class="sos-ico">🏥</div><div><div class="sos-name" id="sos1n">Pronto Soccorso</div><div class="sos-desc" id="sos1d">Policlinico Umberto I — il più vicino</div></div><a href="tel:118" class="call-btn">📞 118</a></div>
+      <div class="sos-card"><div class="sos-ico">👮</div><div><div class="sos-name" id="sos2n">Carabinieri</div><div class="sos-desc" id="sos2d">Forze dell'ordine — emergenze</div></div><a href="tel:112" class="call-btn">📞 112</a></div>
+      <div class="sos-card"><div class="sos-ico">🔥</div><div><div class="sos-name" id="sos3n">Vigili del Fuoco</div><div class="sos-desc" id="sos3d">Incendi, allagamenti, emergenze strutturali</div></div><a href="tel:115" class="call-btn">📞 115</a></div>
+
+      <div class="contact-bar" style="margin-top:12px">
+        <div class="cb-text"><div class="cb-lbl" id="cb2-lbl">Secondo contatto</div><div class="cb-name">+39 328 694 3412</div></div>
+        <a href="tel:+393286943412" class="cb-btn">📞 <span id="cb2-btn">Chiama</span></a>
+      </div>
+      <div class="contact-bar">
+        <div class="cb-text"><div class="cb-lbl" id="cb3-lbl">I tuoi host</div><div class="cb-name">Andrea &amp; Serena</div></div>
+        <a href="tel:+393478528278" class="cb-btn">📞 <span id="cb3-btn">Chiama</span></a>
+      </div>
+
+      <div class="t-card" style="margin-top:4px">
+        <div class="t-card-label" id="lbl-checkout">👋 Check-out</div>
+        <div class="step-item"><div class="step-n">1</div><div><div class="step-title" id="st1t">Bagagli</div><div class="step-desc" id="st1d">Controlla armadi, bagno, balcone e cucina prima di uscire.</div></div></div>
+        <div class="step-item"><div class="step-n">2</div><div><div class="step-title" id="st2t">Rifiuti</div><div class="step-desc" id="st2d">Porta i rifiuti nei bidoni in strada prima di partire.</div></div></div>
+        <div class="step-item"><div class="step-n">3</div><div><div class="step-title" id="st3t">Finestre e luci</div><div class="step-desc" id="st3d">Chiudi finestre, spegni luci e aria condizionata.</div></div></div>
+        <div class="step-item"><div class="step-n">4</div><div><div class="step-title" id="st4t">Chiavi</div><div class="step-desc" id="st4d">Le istruzioni ti verranno inviate via <strong>WhatsApp o Airbnb</strong>.</div></div></div>
+        <div class="step-item"><div class="step-n">5</div><div><div class="step-title" id="st5t">Lascia una recensione ✦</div><div class="step-desc" id="st5d">Una recensione su <strong>Airbnb</strong> o <strong>Booking</strong> ci aiuta tantissimo. Grazie!</div></div></div>
+      </div>
+
+      <div class="t-card" style="background:var(--bg-card);border-color:rgba(26,138,154,.35);text-align:center;padding:22px;margin-top:4px">
+        <div style="font-size:26px;margin-bottom:9px">🏛🍝</div>
+        <div style="font-family:'Playfair Display',serif;font-size:17px;margin-bottom:7px" id="bye-title">Buon soggiorno a Roma!</div>
+        <div style="font-size:13px;color:rgba(255,255,255,.52);line-height:1.65" id="bye-text">Speriamo che il vostro soggiorno sia pieno di scoperte indimenticabili.<br>— Andrea &amp; Serena ❤️</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" onclick="switchTab('home')"><span class="n-ico">🏠</span><span class="n-lbl" id="nav-lbl-home">Home</span></button>
+    <button class="nav-btn" onclick="switchTab('soggiorno')"><span class="n-ico">🛏️</span><span class="n-lbl" id="nav-lbl-sog">Soggiorno</span></button>
+    <button class="nav-btn" onclick="switchTab('luoghi')"><span class="n-ico">🗺️</span><span class="n-lbl" id="nav-lbl-luo">Luoghi</span></button>
+    <button class="nav-btn" onclick="switchTab('mangiare')"><span class="n-ico">🍽️</span><span class="n-lbl" id="nav-lbl-man">Mangiare</span></button>
+    <button class="nav-btn" onclick="switchTab('muoversi')"><span class="n-ico">🚀</span><span class="n-lbl" id="nav-lbl-mov">Muoversi</span></button>
+  </nav>
+</div>
+
+</div>
+<script>
+const APTS = {
+  apt1:{ name:"Andrea's", sub:"House", addr:"Via Messina 25 — Roma", addrShort:"Via Messina 25", ospiti_it:"6 persone", ospiti_en:"6 guests", camera_it:"2 camere con letto matrimoniale. Biancheria inclusa.", camera_en:"2 bedrooms with double bed. Fresh linen included.", maps:"https://maps.app.goo.gl/ZUhgfSUhdqXP5wiU9" },
+  apt2:{ name:"Serena's", sub:"House", addr:"Piazza Alessandria 17 — Roma", addrShort:"Piazza Alessandria 17", ospiti_it:"4 persone", ospiti_en:"4 guests", camera_it:"Camera con letto matrimoniale. Biancheria inclusa.", camera_en:"Bedroom with double bed. Fresh linen included.", maps:"https://maps.app.goo.gl/zZXiBsp8e9FrhfqS9" }
+};
+
+const T = {
+  it:{
+    'wc-title':'Benvenuto! 👋','exp-title':'Esplora la guida','exp-sub':'Tutto quello che ti serve in un tap',
+    'nav-soggiorno':'Il tuo soggiorno','nav-soggiorno-sub':'Check-in, WiFi, regole e spazi',
+    'nav-luoghi':'Luoghi da vedere','nav-luoghi-sub':'Colosseo, Fontana di Trevi e altro',
+    'nav-mangiare':'Dove mangiare','nav-mangiare-sub':'Ristoranti e bar consigliati',
+    'nav-muoversi':'Come muoversi','nav-muoversi-sub':'Metro, bus, taxi ed emergenze',
+    'cb-lbl':'Contatta i tuoi host','cb-btn-txt':'Chiama',
+    'ph-sog-eye':'Il tuo','ph-sog-title':'Soggiorno',
+    'lbl-times':'Check-in & Check-out','lbl-ci':'Check-in','lbl-co':'Check-out','lbl-guests':'Ospiti massimi','lbl-addr':'Indirizzo',
+    'lbl-reach':'Come raggiungerci','txt-reach':'Siamo nel cuore di Roma, in zona Porta Pia, facilmente raggiungibili con metro, bus e taxi. Apri Maps per le indicazioni dalla tua posizione.','maps-reach-txt':'Apri su Google Maps',
+    'lbl-access':'Come accedere','txt-access':'Le istruzioni dettagliate per l\'accesso ti verranno inviate direttamente tramite i <strong>messaggi di Airbnb</strong> prima del tuo arrivo.',
+    'lbl-parking':'Parcheggio','txt-parking':'Non è disponibile un parcheggio privato. Ti consigliamo i mezzi pubblici, molto comodi in questa zona.',
+    'wifi-tip':'📱 Dietro al modem trovi un <strong>QR code</strong> — inquadralo con la fotocamera e ti colleghi automaticamente!',
+    'lbl-rules':'Regole della Casa',
+    'r1t':'Silenzio Notturno','r1d':'Dalle 23:00 alle 8:00 si prega di mantenere un livello di rumore ridotto.',
+    'r2t':'Niente Fumo','r2d':'Vietato fumare all\'interno. Consentito solo sul balcone/terrazzo.',
+    'r3t':'Animali Domestici','r3d':'Non ammessi. Per eccezioni contattare gli host prima della prenotazione.',
+    'r4t':'Ospiti Esterni','r4d':'I visitatori esterni non possono pernottare nell\'appartamento.',
+    'r5t':'Raccolta Rifiuti','r5d':'Unico secchio nell\'appartamento. Bidoni in strada.',
+    'sp1-name':'Camera da Letto','sp2-name':'Cucina','sp2-desc':'Completamente attrezzata. <strong>Cialde caffè</strong> incluse.','sp3-name':'Bagno','sp3-desc':'Doccia, asciugacapelli disponibile.',
+    'tag-ac':'Aria condizionata','tag-heat':'Riscaldamento','tag-tv':'Smart TV','tag-safe':'Cassaforte','tag-coffee':'Macchinetta caffè','tag-shower':'Doccia','tag-hairdryer':'Asciugacapelli','tag-iron':'Ferro da stiro','tag-wash':'Lavatrice',
+    'lbl-extras':'Servizi Extra','svc1t':'Cambio Biancheria','svc1d':'Disponibile su richiesta.','svc2t':'Pulizie Aggiuntive','svc2d':'A pagamento — contattaci per info.','svc3t':'Transfer Aeroporto','svc3d':'Su richiesta via WhatsApp o Airbnb.','svc4t':'Colazione','svc4d':'Disponibile su richiesta.',
+    'ph-luoghi-eye':'Esplora Roma','ph-luoghi-title':'Luoghi',
+    'pl1-desc':'L\'anfiteatro più famoso al mondo. Simbolo di Roma, perfetto per gli amanti della storia.','pl1-how':'🚇 Metro Linea B — fermata <strong>Castro Pretorio</strong> → scendi a <strong>Colosseo</strong>. Biglietto ~€1,50.',
+    'pl2-desc':'Iconica fontana barocca. Lancia la monetina per il ritorno a Roma!','pl2-how':'🚇 Metro A da Repubblica → <strong>Barberini</strong> → 8 min a piedi. Totale ~20 min.',
+    'pl3-desc':'Splendida piazza barocca con fontane e artisti di strada.','pl3-how':'🚌 Bus 492 o 63 fino a Pantheon → 5 min a piedi. Durata ~30 min.',
+    'pl4-desc':'Tempio romano trasformato in chiesa, famoso per la cupola con oculo.','pl4-how':'🚌 Bus 40 o 64 → Piazza Venezia → 5 min a piedi. Durata ~25 min.',
+    'pl5-desc':'Parco panoramico con vista su Colosseo e cupola di San Pietro. Accesso libero.','pl5-how':'🚇 Metro B → <strong>Circo Massimo</strong> → 12 min a piedi. 💡 Dal Buco della Serratura si vede la Cupola di San Pietro!',
+    'ph-man-eye':'Consigli degli host','ph-man-title':'Mangiare',
+    'rt1':'Trattoria · Vicino a casa','rd1':'Ottimo per provare la cucina tipica romana: <strong>carbonara, amatriciana e supplì</strong>.','rtag1':'Vicino',
+    'rt2':'Cucina tipica romana','rd2':'Nel cuore di Trastevere. Cucina tradizionale autentica.',
+    'rt3':'Pizza · Cucina romana','rd3':'Storica pizzeria di Trastevere. Ottima pizza romana.',
+    'rt4':'Bar · Colazione','rt4badge':'Bar · Colazione','rd4':'Perfetto per cappuccino, cornetto e caffè.','rtag4':'Colazione',
+    'lbl-super':'🛒 Supermercato','txt-super':'Ben fornito in <strong>Piazza Alessandria</strong> — vicinissimo a casa!',
+    'ph-mov-eye':'Trasporti & Emergenze','ph-mov-title':'Muoversi',
+    'mv1t':'Metro — Linea B','mv1d':'Fermata più vicina: <strong>Castro Pretorio</strong>. Raggiunge il Colosseo e fa cambio per Linea A.','mv2t':'Bus — Linee 40, 63, 64, 492','mv2d':'Ottima copertura verso Trastevere, Centro Storico e oltre.','mv3t':'Biglietti','mv3d':'Biglietto singolo <strong>~€1,50</strong>, valido 100 min su metro e bus.','mv4t':'Taxi & App','mv4d':'Usa <strong>itTaxi</strong> o <strong>FREE NOW</strong>.',
+    'lbl-sos':'🆘 Emergenze','sos1n':'Pronto Soccorso','sos1d':'Policlinico Umberto I — il più vicino','sos2n':'Carabinieri','sos2d':'Forze dell\'ordine — emergenze','sos3n':'Vigili del Fuoco','sos3d':'Incendi, allagamenti, emergenze',
+    'cb2-lbl':'Secondo contatto','cb2-btn':'Chiama','cb3-lbl':'I tuoi host','cb3-btn':'Chiama',
+    'lbl-checkout':'👋 Check-out','st1t':'Bagagli','st1d':'Controlla armadi, bagno, balcone e cucina prima di uscire.','st2t':'Rifiuti','st2d':'Porta i rifiuti nei bidoni in strada prima di partire.','st3t':'Finestre e luci','st3d':'Chiudi finestre, spegni luci e aria condizionata.','st4t':'Chiavi','st4d':'Le istruzioni ti verranno inviate via <strong>WhatsApp o Airbnb</strong>.','st5t':'Lascia una recensione ✦','st5d':'Una recensione su <strong>Airbnb</strong> o <strong>Booking</strong> ci aiuta tantissimo. Grazie!',
+    'bye-title':'Buon soggiorno a Roma!','bye-text':'Speriamo che il vostro soggiorno sia pieno di scoperte indimenticabili.<br>— Andrea & Serena ❤️',
+    'nav-lbl-home':'Home','nav-lbl-sog':'Soggiorno','nav-lbl-luo':'Luoghi','nav-lbl-man':'Mangiare','nav-lbl-mov':'Muoversi',
+    's-checkin-lbl':'Check-in','s-checkout-lbl':'Check-out','s-maps-lbl':'Naviga',
+    'wc-text':'Benvenuti nella vostra casa a Roma! 🌟 Siamo Andrea e Serena, siamo felici di avervi qui e speriamo che il vostro soggiorno sia confortevole, rilassante e pieno di scoperte indimenticabili. Questa guida è stata pensata per aiutarvi a conoscere la casa e i migliori consigli locali. Se avete domande non esitate a contattarci! 🏛🍝'
+  },
+  en:{
+    'wc-title':'Welcome! 👋','exp-title':'Explore the guide','exp-sub':'Everything you need in one tap',
+    'nav-soggiorno':'Your stay','nav-soggiorno-sub':'Check-in, WiFi, rules and spaces',
+    'nav-luoghi':'Places to visit','nav-luoghi-sub':'Colosseum, Trevi Fountain and more',
+    'nav-mangiare':'Where to eat','nav-mangiare-sub':'Recommended restaurants and bars',
+    'nav-muoversi':'Getting around','nav-muoversi-sub':'Metro, bus, taxi and emergencies',
+    'cb-lbl':'Contact your hosts','cb-btn-txt':'Call',
+    'ph-sog-eye':'Your','ph-sog-title':'Stay',
+    'lbl-times':'Check-in & Check-out','lbl-ci':'Check-in','lbl-co':'Check-out','lbl-guests':'Max guests','lbl-addr':'Address',
+    'lbl-reach':'How to reach us','txt-reach':'We are in the heart of Rome, in the Porta Pia area, easily reachable by metro, bus and taxi. Open Maps for directions from your location.','maps-reach-txt':'Open on Google Maps',
+    'lbl-access':'How to access','txt-access':'Detailed access instructions will be sent directly through <strong>Airbnb messages</strong> before your arrival. We are always available!',
+    'lbl-parking':'Parking','txt-parking':'No private parking available. We recommend using public transport, which is very convenient in this central area of Rome.',
+    'wifi-tip':'📱 Behind the router you\'ll find a <strong>QR code</strong> — scan it with your phone camera and you\'ll connect automatically!',
+    'lbl-rules':'House Rules',
+    'r1t':'Quiet Hours','r1d':'From 11:00 PM to 8:00 AM please keep noise levels low, out of respect for neighbours.',
+    'r2t':'No Smoking','r2d':'Smoking is prohibited indoors. Allowed only on the balcony/terrace.',
+    'r3t':'Pets','r3d':'Not allowed. For exceptions please contact the hosts before booking.',
+    'r4t':'External Guests','r4d':'External visitors are welcome but cannot stay overnight.',
+    'r5t':'Waste Disposal','r5d':'Single bin in the apartment. Large bins available on the street.',
+    'sp1-name':'Bedroom','sp2-name':'Kitchen','sp2-desc':'Fully equipped. <strong>Coffee pods</strong> included.','sp3-name':'Bathroom','sp3-desc':'Shower, hairdryer available.',
+    'tag-ac':'Air conditioning','tag-heat':'Heating','tag-tv':'Smart TV','tag-safe':'Safe','tag-coffee':'Coffee machine','tag-shower':'Shower','tag-hairdryer':'Hairdryer','tag-iron':'Iron','tag-wash':'Washing machine',
+    'lbl-extras':'Extra Services','svc1t':'Linen Change','svc1d':'Available on request during your stay.','svc2t':'Extra Cleaning','svc2d':'Paid service — contact us for info.','svc3t':'Airport Transfer','svc3d':'On request via WhatsApp or Airbnb.','svc4t':'Breakfast','svc4d':'Available on request — contact us to arrange.',
+    'ph-luoghi-eye':'Explore Rome','ph-luoghi-title':'Places',
+    'pl1-desc':'The most famous amphitheatre in the world. Symbol of Rome, perfect for history lovers.','pl1-how':'🚇 Metro Line B — nearest stop: <strong>Castro Pretorio</strong> → get off at <strong>Colosseo</strong>. Ticket ~€1.50.',
+    'pl2-desc':'Iconic baroque fountain. Toss a coin to ensure your return to Rome!','pl2-how':'🚇 Metro A from Repubblica → <strong>Barberini</strong> → 8 min walk. Total ~20 min.',
+    'pl3-desc':'Beautiful baroque square with fountains and street artists. Perfect for a stroll and a coffee.','pl3-how':'🚌 Bus 492 or 63 to Pantheon → 5 min walk. Total ~30 min.',
+    'pl4-desc':'Roman temple turned church, famous for its dome with oculus.','pl4-how':'🚌 Bus 40 or 64 → Piazza Venezia → 5 min walk. Total ~25 min.',
+    'pl5-desc':'Panoramic park on the Aventine Hill with spectacular views of the Colosseum and St. Peter\'s dome. Free admission.','pl5-how':'🚇 Metro B → <strong>Circo Massimo</strong> → 12 min walk. 💡 From the Keyhole in Piazza dei Cavalieri di Malta you can see St. Peter\'s dome perfectly framed!',
+    'ph-man-eye':'Host recommendations','ph-man-title':'Where to eat',
+    'rt1':'Roman trattoria · Nearby','rd1':'Great for traditional Roman cuisine: <strong>carbonara, amatriciana and supplì</strong>.','rtag1':'Nearby',
+    'rt2':'Traditional Roman cuisine','rd2':'In the heart of Trastevere, one of Rome\'s most charming neighbourhoods.',
+    'rt3':'Pizza · Roman cuisine','rd3':'Historic pizzeria in Trastevere. Excellent Roman-style pizza.',
+    'rt4':'Bar · Breakfast','rt4badge':'Bar · Breakfast','rd4':'Perfect for cappuccino, croissant and coffee. Ideal way to start your day.','rtag4':'Breakfast',
+    'lbl-super':'🛒 Supermarket','txt-super':'Well-stocked supermarket in <strong>Piazza Alessandria</strong> — very close to home!',
+    'ph-mov-eye':'Transport & Emergencies','ph-mov-title':'Getting around',
+    'mv1t':'Metro — Line B','mv1d':'Nearest stop: <strong>Castro Pretorio</strong>. Reaches the Colosseum and connects to Line A (Termini).','mv2t':'Bus — Lines 40, 63, 64, 492','mv2d':'Excellent coverage from Via Messina towards Trastevere, Historic Centre and beyond.','mv3t':'Tickets','mv3d':'Single ticket <strong>~€1.50</strong>, valid 100 min on metro and bus. Buy before boarding at kiosks or tobacconists.','mv4t':'Taxi & Apps','mv4d':'Use <strong>itTaxi</strong> or <strong>FREE NOW</strong>. Uber is available but more expensive in the city centre.',
+    'lbl-sos':'🆘 Emergency numbers','sos1n':'Emergency Room','sos1d':'Policlinico Umberto I — nearest hospital','sos2n':'Carabinieri','sos2d':'Police — emergencies','sos3n':'Fire Brigade','sos3d':'Fire, flooding, structural emergencies',
+    'cb2-lbl':'Second contact','cb2-btn':'Call','cb3-lbl':'Your hosts','cb3-btn':'Call',
+    'lbl-checkout':'👋 Check-out','st1t':'Pack your bags','st1d':'Check wardrobes, bathroom, balcony and kitchen before leaving.','st2t':'Waste','st2d':'Take rubbish to the bins on the street before you leave.','st3t':'Windows & lights','st3d':'Close windows, turn off lights and air conditioning.','st4t':'Keys','st4d':'Instructions for returning keys will be sent via <strong>WhatsApp or Airbnb</strong>.','st5t':'Leave a review ✦','st5d':'A review on <strong>Airbnb</strong> or <strong>Booking</strong> means the world to us. Thank you!',
+    'bye-title':'Enjoy your stay in Rome!','bye-text':'We hope your stay will be full of unforgettable discoveries.<br>— Andrea & Serena ❤️',
+    'nav-lbl-home':'Home','nav-lbl-sog':'Stay','nav-lbl-luo':'Places','nav-lbl-man':'Eat','nav-lbl-mov':'Around',
+    's-checkin-lbl':'Check-in','s-checkout-lbl':'Check-out','s-maps-lbl':'Navigate',
+    'wc-text':'Welcome to your home in Rome! 🌟 We are Andrea and Serena, and we are so happy to have you here. We hope your stay will be comfortable, relaxing and full of unforgettable discoveries. This guide is here to help you discover the apartment, available services and our best local tips. Don\'t hesitate to contact us! 🏛🍝'
+  }
+};
+
+let currentApt='apt1', currentLang='it';
+
+function applyLang(lang){
+  const t=T[lang];
+  for(const id in t){
+    const el=document.getElementById(id);
+    if(el) el.innerHTML=t[id];
+  }
+  document.querySelectorAll('.guide-me').forEach(el=>{ el.textContent = lang==='en'?'Guide me here':'Guide me here'; });
+}
+
+function openGuide(apt,lang){
+  currentApt=apt; currentLang=lang;
+  const d=APTS[apt];
+  document.getElementById('h-title').innerHTML=d.name+' <em>'+d.sub+'</em>';
+  document.getElementById('h-badge').textContent='✦ PORTA PIA · ROMA';
+  document.getElementById('h-addr').textContent=d.addr;
+  document.getElementById('sog-addr').textContent=d.addrShort;
+  document.getElementById('max-ospiti').textContent=lang==='en'?d.ospiti_en:d.ospiti_it;
+  document.getElementById('camera-desc').textContent=lang==='en'?d.camera_en:d.camera_it;
+  document.getElementById('maps-reach-btn').href=d.maps;
+  applyLang(lang);
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('guide').classList.add('active');
+  switchTab('home');
+}
+
+function backToLanding(){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('landing').classList.add('active');
+}
+
+function switchTab(name){
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  const tabs=['home','soggiorno','luoghi','mangiare','muoversi'];
+  const idx=tabs.indexOf(name);
+  if(idx>=0) document.querySelectorAll('.nav-btn')[idx].classList.add('active');
+  document.getElementById('tab-'+name).scrollTop=0;
+}
+
+function openMaps(){ window.open(APTS[currentApt].maps,'_blank'); }
+</script>
+</body>
+</html>
